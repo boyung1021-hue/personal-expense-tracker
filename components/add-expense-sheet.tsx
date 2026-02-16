@@ -126,11 +126,11 @@ export function AddExpenseSheet({ selectedDate, onAdd, onClose }: any) {
             {quickAmounts.map((amt) => (
               <button
                 key={amt}
-                onClick={() => setAmount(String(amt))}
+                onClick={() => setAmount((prev) => String((parseInt(prev) || 0) + amt))}
                 className="py-2 px-3 rounded-lg text-xs font-medium"
                 style={{ background: '#E8E6E0', color: '#6A6A60' }}
               >
-                {amt >= 10000 ? `${amt / 10000}만` : `${amt / 1000}천`}
+                {amt >= 10000 ? `+${amt / 10000}만` : `+${amt / 1000}천`}
               </button>
             ))}
           </div>
