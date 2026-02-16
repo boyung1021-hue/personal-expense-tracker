@@ -3,18 +3,21 @@
 import { useState } from 'react'
 import { CategoryIcon } from './category-icons'
 import { CATEGORIES, formatWon } from '@/lib/expense-data'
+import { Calendar } from '@/components/ui/calendar'
 
 export function AddExpenseSheet({ selectedDate, onAdd, onClose }: any) {
   const [category, setCategory] = useState('')
   const [amount, setAmount] = useState('')
   const [memo, setMemo] = useState('')
+  const [date, setDate] = useState(selectedDate)
+  const [showCalendar, setShowCalendar] = useState(false)
 
   const handleSubmit = () => {
     if (!category || !amount) return
 
     onAdd({
-      id: `${selectedDate}-${Date.now()}`,
-      date: selectedDate,
+      id: `${date}-${Date.now()}`,
+      date,
       category,
       amount: parseInt(amount),
       memo,
@@ -45,11 +48,37 @@ export function AddExpenseSheet({ selectedDate, onAdd, onClose }: any) {
           <label className="block text-sm font-semibold mb-2" style={{ color: '#5A5A50' }}>
             날짜
           </label>
-          <div className="p-3 rounded-xl" style={{ background: '#E8E6E0' }}>
+          <button
+            type="button"
+            onClick={() => setShowCalendar(!showCalendar)}
+            className="w-full p-3 rounded-xl text-left flex items-center justify-between"
+            style={{ background: '#E8E6E0' }}
+          >
             <span className="text-sm" style={{ color: '#6A6A60' }}>
-              {selectedDate}
+              {date}
             </span>
-          </div>
+            <svg viewBox="0 0 20 20" width="16" height="16" style={{ transform: showCalendar ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+              <path d="M5 7l5 5 5-5" stroke="#8A8A80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            </svg>
+          </button>
+          {showCalendar && (
+            <div className="mt-2 rounded-xl overflow-hidden flex justify-center" style={{ background: '#fff', border: '2px solid #E8E6E0' }}>
+              <Calendar
+                mode="single"
+                selected={new Date(date + 'T00:00:00')}
+                onSelect={(day) => {
+                  if (day) {
+                    const y = day.getFullYear()
+                    const m = String(day.getMonth() + 1).padStart(2, '0')
+                    const d = String(day.getDate()).padStart(2, '0')
+                    setDate(`${y}-${m}-${d}`)
+                    setShowCalendar(false)
+                  }
+                }}
+                initialFocus
+              />
+            </div>
+          )}
         </div>
 
         <div className="mb-5">
