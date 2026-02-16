@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { EmotionFace, getFaceType, faceBg, CategoryIcon } from './category-icons'
 import { categoryMap, formatWon, getDaysInMonth, getFirstDayOfMonth } from '@/lib/expense-data'
 
@@ -173,39 +174,124 @@ export function DailyView({ expenses, selectedDate, setSelectedDate, currentMont
 }
 
 function ExpenseRow({ expense, index }: any) {
+  const [showDetail, setShowDetail] = useState(false)
   const category = categoryMap[expense.category]
+  const hasDetail = expense.memo || expense.discount || expense.account
 
   return (
-    <div
-      className="fs flex items-center gap-3 p-3 rounded-2xl"
-      style={{
-        background: '#fff',
-        animationDelay: `${index * 0.04}s`,
-      }}
-    >
+    <>
       <div
-        className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
-        style={{ background: category.bg }}
+        className="fs flex items-center gap-3 p-3 rounded-2xl cursor-pointer"
+        style={{
+          background: '#fff',
+          animationDelay: `${index * 0.04}s`,
+        }}
+        onClick={() => setShowDetail(true)}
       >
-        <CategoryIcon id={expense.category} size={26} />
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-[13px] font-semibold" style={{ color: '#4A4A42' }}>
-          {category.name}
+        <div
+          className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
+          style={{ background: category.bg }}
+        >
+          <CategoryIcon id={expense.category} size={26} />
         </div>
-        {expense.memo && (
-          <div
-            className="text-[11px] mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap"
-            style={{ color: '#B0AEA4' }}
-          >
-            {expense.memo}
+        <div className="flex-1 min-w-0">
+          <div className="text-[13px] font-semibold" style={{ color: '#4A4A42' }}>
+            {category.name}
           </div>
-        )}
+          {expense.memo && (
+            <div
+              className="text-[11px] mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap"
+              style={{ color: '#B0AEA4' }}
+            >
+              {expense.memo}
+            </div>
+          )}
+        </div>
+        <span className="text-[13px] font-bold" style={{ color: '#5A5A50', letterSpacing: -0.3 }}>
+          {formatWon(expense.amount)}
+        </span>
       </div>
-      <span className="text-[13px] font-bold" style={{ color: '#5A5A50', letterSpacing: -0.3 }}>
-        {formatWon(expense.amount)}
-      </span>
-    </div>
+
+      {showDetail && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.4)' }}
+          onClick={() => setShowDetail(false)}
+        >
+          <div
+            className="w-[85%] max-w-sm rounded-2xl p-5"
+            style={{ background: '#FDFBF7' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                style={{ background: category.bg }}
+              >
+                <CategoryIcon id={expense.category} size={28} />
+              </div>
+              <div>
+                <div className="text-base font-bold" style={{ color: '#4A4A42' }}>
+                  {category.name}
+                </div>
+                <div className="text-xs" style={{ color: '#B0AEA4' }}>
+                  {expense.date}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 mb-4">
+              <div className="flex justify-between items-center p-3 rounded-xl" style={{ background: '#fff' }}>
+                <span className="text-xs font-semibold" style={{ color: '#8A8A80' }}>금액</span>
+                <span className="text-sm font-bold" style={{ color: '#4A4A42' }}>{formatWon(expense.amount)}</span>
+              </div>
+
+              {expense.discount > 0 && (
+                <div className="flex justify-between items-center p-3 rounded-xl" style={{ background: '#fff' }}>
+                  <span className="text-xs font-semibold" style={{ color: '#8A8A80' }}>할인 금액</span>
+                  <span className="text-sm font-bold" style={{ color: '#C4908E' }}>-{formatWon(expense.discount)}</span>
+                </div>
+              )}
+
+              {expense.discount > 0 && (
+                <div className="flex justify-between items-center p-3 rounded-xl" style={{ background: '#F0EDE6' }}>
+                  <span className="text-xs font-semibold" style={{ color: '#8A8A80' }}>실결제 금액</span>
+                  <span className="text-sm font-bold" style={{ color: '#7A9B6D' }}>{formatWon(expense.amount - expense.discount)}</span>
+                </div>
+              )}
+
+              {expense.account && (
+                <div className="flex justify-between items-center p-3 rounded-xl" style={{ background: '#fff' }}>
+                  <span className="text-xs font-semibold" style={{ color: '#8A8A80' }}>출처 계좌</span>
+                  <span className="text-sm font-medium" style={{ color: '#4A4A42' }}>{expense.account}</span>
+                </div>
+              )}
+
+              {expense.memo && (
+                <div className="p-3 rounded-xl" style={{ background: '#fff' }}>
+                  <span className="text-xs font-semibold block mb-1" style={{ color: '#8A8A80' }}>메모</span>
+                  <span className="text-sm" style={{ color: '#4A4A42' }}>{expense.memo}</span>
+                </div>
+              )}
+
+              {!hasDetail && (
+                <div className="text-center py-2">
+                  <span className="text-xs" style={{ color: '#B0AEA4' }}>추가 정보가 없습니다</span>
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={() => setShowDetail(false)}
+              className="w-full py-3 rounded-xl text-sm font-semibold"
+              style={{ background: '#E8E6E0', color: '#6A6A60' }}
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 
