@@ -4,6 +4,8 @@ export interface Expense {
   amount: number
   category: string
   memo?: string
+  discount?: number
+  account?: string
 }
 
 export interface CategoryStats {

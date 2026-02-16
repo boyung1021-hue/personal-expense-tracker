@@ -8,6 +8,8 @@ import { Calendar } from '@/components/ui/calendar'
 export function AddExpenseSheet({ selectedDate, onAdd, onClose }: any) {
   const [category, setCategory] = useState('')
   const [amount, setAmount] = useState('')
+  const [discount, setDiscount] = useState('')
+  const [account, setAccount] = useState('')
   const [memo, setMemo] = useState('')
   const [date, setDate] = useState(selectedDate)
   const [showCalendar, setShowCalendar] = useState(false)
@@ -21,6 +23,8 @@ export function AddExpenseSheet({ selectedDate, onAdd, onClose }: any) {
       category,
       amount: parseInt(amount),
       memo,
+      discount: discount ? parseInt(discount) : undefined,
+      account: account || undefined,
     })
   }
 
@@ -134,6 +138,34 @@ export function AddExpenseSheet({ selectedDate, onAdd, onClose }: any) {
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="mb-5">
+          <label className="block text-sm font-semibold mb-2" style={{ color: '#5A5A50' }}>
+            할인 금액 (선택)
+          </label>
+          <input
+            type="number"
+            value={discount}
+            onChange={(e) => setDiscount(e.target.value)}
+            placeholder="할인 금액을 입력하세요"
+            className="w-full p-4 rounded-xl text-base"
+            style={{ background: '#fff', border: '2px solid #E8E6E0', color: '#4A4A42' }}
+          />
+        </div>
+
+        <div className="mb-5">
+          <label className="block text-sm font-semibold mb-2" style={{ color: '#5A5A50' }}>
+            출처 계좌 (선택)
+          </label>
+          <input
+            type="text"
+            value={account}
+            onChange={(e) => setAccount(e.target.value)}
+            placeholder="출처 계좌를 입력하세요"
+            className="w-full p-4 rounded-xl text-base"
+            style={{ background: '#fff', border: '2px solid #E8E6E0', color: '#4A4A42' }}
+          />
         </div>
 
         <div className="mb-6">
