@@ -6,10 +6,12 @@ import { CategoryView } from './category-view'
 import { HistoryView } from './history-view'
 import { SettingsView } from './settings-view'
 import { AddExpenseSheet } from './add-expense-sheet'
-import { fetchExpenses, insertExpense } from '@/lib/supabase'
+import { fetchExpenses, insertExpense, signOut } from '@/lib/supabase'
+import { useRouter } from 'next/navigation'
 import { Expense } from '@/lib/types'
 
 export function ExpenseApp() {
+  const router = useRouter()
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('daily')
@@ -54,15 +56,17 @@ export function ExpenseApp() {
               오늘 하루도 가볍게 기록해요
             </p>
           </div>
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center"
+          <button
+            onClick={() => signOut().then(() => router.replace('/login'))}
+            className="w-9 h-9 rounded-full flex items-center justify-center transition-opacity hover:opacity-70"
             style={{ background: '#E8E6E0' }}
+            title="로그아웃"
           >
             <svg viewBox="0 0 24 24" width="20" height="20">
               <circle cx="12" cy="10" r="4" fill="#A8B898" />
               <path d="M5 22c0-5 3-7 7-7s7 2 7 7" fill="#A8B898" opacity="0.5" />
             </svg>
-          </div>
+          </button>
         </div>
       </header>
 
