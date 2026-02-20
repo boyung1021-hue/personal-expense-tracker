@@ -158,14 +158,18 @@ export function AddExpenseSheet({ selectedDate, onAdd, onClose }: any) {
           <label className="block text-sm font-semibold mb-2" style={{ color: '#5A5A50' }}>
             출처 계좌 (선택)
           </label>
-          <input
-            type="text"
+          <select
             value={account}
             onChange={(e) => setAccount(e.target.value)}
-            placeholder="출처 계좌를 입력하세요"
-            className="w-full p-4 rounded-xl text-base"
-            style={{ background: '#fff', border: '2px solid #E8E6E0', color: '#4A4A42' }}
-          />
+            className="w-full p-4 rounded-xl text-base appearance-none"
+            style={{ background: '#fff', border: '2px solid #E8E6E0', color: account ? '#4A4A42' : '#B0AEA4' }}
+          >
+            <option value="">선택하세요</option>
+            <option value="카카오뱅크 체크">카카오뱅크 체크</option>
+            <option value="우리은행 체크">우리은행 체크</option>
+            <option value="복지포인트">복지포인트</option>
+            <option value="현금">현금</option>
+          </select>
         </div>
 
         <div className="mb-6">
