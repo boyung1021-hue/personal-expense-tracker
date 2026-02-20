@@ -1,15 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { DailyView } from './daily-view'
 import { CategoryView } from './category-view'
 import { HistoryView } from './history-view'
 import { SettingsView } from './settings-view'
 import { AddExpenseSheet } from './add-expense-sheet'
-import { mockExpenses } from '@/lib/expense-data'
+import { fetchExpenses, insertExpense } from '@/lib/supabase'
+import { Expense } from '@/lib/types'
 
 export function ExpenseApp() {
-  const [expenses, setExpenses] = useState(mockExpenses())
+  const [expenses, setExpenses] = useState<Expense[]>([])
+  const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('daily')
   const [showAdd, setShowAdd] = useState(false)
   const [selectedDate, setSelectedDate] = useState(formatDate(new Date()))
@@ -18,8 +20,20 @@ export function ExpenseApp() {
     month: new Date().getMonth(),
   })
 
-  const handleAddExpense = (expense: any) => {
-    setExpenses((prev) => [expense, ...prev])
+  useEffect(() => {
+    fetchExpenses()
+      .then(setExpenses)
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
+
+  const handleAddExpense = async (expense: any) => {
+    try {
+      const saved = await insertExpense(expense)
+      setExpenses((prev) => [saved, ...prev])
+    } catch (err) {
+      console.error('Failed to save expense:', err)
+    }
     setShowAdd(false)
   }
 
@@ -53,18 +67,26 @@ export function ExpenseApp() {
       </header>
 
       <main className="max-w-md mx-auto pb-20">
-        {tab === 'daily' && (
-          <DailyView
-            expenses={expenses}
-            selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
-            currentMonth={currentMonth}
-            setCurrentMonth={setCurrentMonth}
-          />
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <p className="text-sm" style={{ color: '#B0AEA4' }}>불러오는 중...</p>
+          </div>
+        ) : (
+          <>
+            {tab === 'daily' && (
+              <DailyView
+                expenses={expenses}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                currentMonth={currentMonth}
+                setCurrentMonth={setCurrentMonth}
+              />
+            )}
+            {tab === 'cat' && <CategoryView expenses={expenses} />}
+            {tab === 'hist' && <HistoryView expenses={expenses} />}
+            {tab === 'set' && <SettingsView />}
+          </>
         )}
-        {tab === 'cat' && <CategoryView expenses={expenses} />}
-        {tab === 'hist' && <HistoryView expenses={expenses} />}
-        {tab === 'set' && <SettingsView />}
       </main>
 
       <nav
