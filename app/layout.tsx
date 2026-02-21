@@ -9,9 +9,16 @@ const _geistMono = Geist_Mono({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: "소비콩",
   description: "Track your daily expenses with ease",
-  generator: "v0.app"
-}
+  generator: "v0.app",
 
+  manifest: "/manifest.json",
+
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "소비콩",
+  },
+}
 
 export default function RootLayout({
   children,
