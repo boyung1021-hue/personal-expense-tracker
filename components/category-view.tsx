@@ -12,12 +12,15 @@ export function CategoryView({ expenses }: any) {
   const { year, month } = viewMonth
   const prefix = `${year}-${String(month + 1).padStart(2, '0')}`
   const monthExpenses = expenses.filter((e: any) => e.date.startsWith(prefix))
-  const total = monthExpenses.reduce((sum: number, e: any) => sum + (e.amount - (e.discount || 0)), 0)
+  const net = (e: any) => e.amount - (e.discount || 0)
+  const total = monthExpenses.reduce((sum: number, e: any) => sum + net(e), 0)
+  const variableTotal = monthExpenses.filter((e: any) => e.expenseType === 'variable').reduce((sum: number, e: any) => sum + net(e), 0)
+  const fixedTotal = monthExpenses.filter((e: any) => e.expenseType === 'fixed').reduce((sum: number, e: any) => sum + net(e), 0)
 
   const categoryTotals: Record<string, number> = {}
   const categoryCounts: Record<string, number> = {}
   monthExpenses.forEach((e: any) => {
-    categoryTotals[e.category] = (categoryTotals[e.category] || 0) + (e.amount - (e.discount || 0))
+    categoryTotals[e.category] = (categoryTotals[e.category] || 0) + net(e)
     categoryCounts[e.category] = (categoryCounts[e.category] || 0) + 1
   })
 
@@ -73,12 +76,32 @@ export function CategoryView({ expenses }: any) {
         </button>
       </div>
 
-      <div className="mx-5 mb-4 p-5 rounded-2xl text-center" style={{ background: '#F3F0E8' }}>
-        <span className="text-xs font-medium" style={{ color: '#9A9A90' }}>
-          이번 달 총 지출
-        </span>
-        <div className="text-2xl font-bold mt-1" style={{ color: '#5A5A50' }}>
-          {formatWon(total)}
+      <div className="mx-5 mb-4 p-5 rounded-2xl" style={{ background: '#F3F0E8' }}>
+        <div className="text-center mb-4">
+          <span className="text-xs font-medium" style={{ color: '#9A9A90' }}>
+            이번 달 총 지출
+          </span>
+          <div className="text-2xl font-bold mt-1" style={{ color: '#5A5A50' }}>
+            {formatWon(total)}
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <div className="flex-1 rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.6)' }}>
+            <div className="text-xs font-medium mb-1" style={{ color: '#9A9A90' }}>
+              변동비
+            </div>
+            <div className="text-base font-bold" style={{ color: '#7A9B6D' }}>
+              {formatWon(variableTotal)}
+            </div>
+          </div>
+          <div className="flex-1 rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.6)' }}>
+            <div className="text-xs font-medium mb-1" style={{ color: '#9A9A90' }}>
+              고정비
+            </div>
+            <div className="text-base font-bold" style={{ color: '#A07A6D' }}>
+              {formatWon(fixedTotal)}
+            </div>
+          </div>
         </div>
       </div>
 

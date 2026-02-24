@@ -14,6 +14,7 @@ interface DbExpense {
   memo: string | null
   discount_amount: number | null
   source_account: string | null
+  expense_type: 'variable' | 'fixed' | null
 }
 
 function toAppExpense(row: DbExpense): Expense {
@@ -27,6 +28,7 @@ function toAppExpense(row: DbExpense): Expense {
     memo: row.memo ?? undefined,
     discount: row.discount_amount ? Number(row.discount_amount) : undefined,
     account: row.source_account ?? undefined,
+    expenseType: row.expense_type ?? undefined,
   }
 }
 
@@ -50,6 +52,7 @@ export async function insertExpense(expense: Omit<Expense, 'id'>): Promise<Expen
       memo: expense.memo || null,
       discount_amount: expense.discount ?? null,
       source_account: expense.account ?? null,
+      expense_type: expense.expenseType ?? null,
     })
     .select()
     .single()

@@ -6,6 +6,7 @@ export interface Expense {
   memo?: string
   discount?: number
   account?: string
+  expenseType?: 'variable' | 'fixed'
 }
 
 export interface CategoryStats {

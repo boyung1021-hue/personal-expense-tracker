@@ -13,6 +13,7 @@ export function AddExpenseSheet({ selectedDate, onAdd, onClose }: any) {
   const [memo, setMemo] = useState('')
   const [date, setDate] = useState(selectedDate)
   const [showCalendar, setShowCalendar] = useState(false)
+  const [expenseType, setExpenseType] = useState<'variable' | 'fixed'>('variable')
 
   const handleSubmit = () => {
     if (!category || !amount) return
@@ -25,6 +26,7 @@ export function AddExpenseSheet({ selectedDate, onAdd, onClose }: any) {
       memo,
       discount: discount ? parseInt(discount) : undefined,
       account: account || undefined,
+      expense_type: expenseType,
     })
   }
 
@@ -83,6 +85,36 @@ export function AddExpenseSheet({ selectedDate, onAdd, onClose }: any) {
               />
             </div>
           )}
+        </div>
+
+        <div className="mb-5">
+          <label className="block text-sm font-semibold mb-2" style={{ color: '#5A5A50' }}>
+            지출 유형
+          </label>
+          <div className="flex gap-2 p-1 rounded-xl" style={{ background: '#E8E6E0' }}>
+            <button
+              onClick={() => setExpenseType('variable')}
+              className="flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all"
+              style={{
+                background: expenseType === 'variable' ? '#fff' : 'transparent',
+                color: expenseType === 'variable' ? '#7A9B6D' : '#8A8A80',
+                boxShadow: expenseType === 'variable' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+              }}
+            >
+              변동비
+            </button>
+            <button
+              onClick={() => setExpenseType('fixed')}
+              className="flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all"
+              style={{
+                background: expenseType === 'fixed' ? '#fff' : 'transparent',
+                color: expenseType === 'fixed' ? '#7A9B6D' : '#8A8A80',
+                boxShadow: expenseType === 'fixed' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+              }}
+            >
+              고정비
+            </button>
+          </div>
         </div>
 
         <div className="mb-5">
