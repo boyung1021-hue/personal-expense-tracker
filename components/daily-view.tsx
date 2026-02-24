@@ -15,12 +15,12 @@ export function DailyView({ expenses, selectedDate, setSelectedDate, currentMont
   const dailyTotals: Record<string, number> = {}
   expenses.forEach((e: any) => {
     if (e.date.startsWith(`${year}-${String(month + 1).padStart(2, '0')}`)) {
-      dailyTotals[e.date] = (dailyTotals[e.date] || 0) + e.amount
+      dailyTotals[e.date] = (dailyTotals[e.date] || 0) + (e.amount - (e.discount || 0))
     }
   })
 
   const dayExpenses = expenses.filter((e: any) => e.date === selectedDate)
-  const dayTotal = dayExpenses.reduce((sum: number, e: any) => sum + e.amount, 0)
+  const dayTotal = dayExpenses.reduce((sum: number, e: any) => sum + (e.amount - (e.discount || 0)), 0)
 
   const changeMonth = (delta: number) => {
     setCurrentMonth((prev: any) => {

@@ -34,7 +34,7 @@ export function HistoryView({ expenses }: any) {
         <div className="flex flex-col gap-4">
           {dates.map((date) => {
             const dayExpenses = grouped[date]
-            const dayTotal = dayExpenses.reduce((sum, e) => sum + e.amount, 0)
+            const dayTotal = dayExpenses.reduce((sum, e) => sum + (e.amount - (e.discount || 0)), 0)
             const [y, m, d] = date.split('-')
 
             return (

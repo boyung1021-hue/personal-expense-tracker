@@ -12,12 +12,12 @@ export function CategoryView({ expenses }: any) {
   const { year, month } = viewMonth
   const prefix = `${year}-${String(month + 1).padStart(2, '0')}`
   const monthExpenses = expenses.filter((e: any) => e.date.startsWith(prefix))
-  const total = monthExpenses.reduce((sum: number, e: any) => sum + e.amount, 0)
+  const total = monthExpenses.reduce((sum: number, e: any) => sum + (e.amount - (e.discount || 0)), 0)
 
   const categoryTotals: Record<string, number> = {}
   const categoryCounts: Record<string, number> = {}
   monthExpenses.forEach((e: any) => {
-    categoryTotals[e.category] = (categoryTotals[e.category] || 0) + e.amount
+    categoryTotals[e.category] = (categoryTotals[e.category] || 0) + (e.amount - (e.discount || 0))
     categoryCounts[e.category] = (categoryCounts[e.category] || 0) + 1
   })
 
