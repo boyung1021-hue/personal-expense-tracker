@@ -50,9 +50,9 @@ export async function insertExpense(expense: Omit<Expense, 'id'>): Promise<Expen
       amount: expense.amount,
       category: expense.category,
       memo: expense.memo || null,
-      discount_amount: expense.discount ?? null,
+      discount_amount: expense.discount ?? 0,
       source_account: expense.account ?? null,
-      expense_type: expense.expenseType ?? null,
+      expense_type: expense.expenseType ?? 'variable',
     })
     .select()
     .single()
